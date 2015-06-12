@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="siso.content_loader.database_schema_creator.class">Siso\Bundle\ContentLoaderBundle\Loader\DatabaseSchemaCreator</parameter>
+        <parameter key="siso.content_loader.fixture_loader.class">Siso\Bundle\ContentLoaderBundle\Loader\FixtureLoader</parameter>
+        <parameter key="siso.content_loader.loader.class">Siso\Bundle\ContentLoaderBundle\Loader\ContentLoader</parameter>
+    </parameters>
+    
+    <services>
+
+        <!-- Public API -->
+        <!-- Define LanguageService because it is not defined in Public API -->
+
+        <service class="eZ\Publish\Core\Repository\LanguageService" id="ezpublish.api.service.content_language"
+                factory-service="ezpublish.api.repository.factory" factory-method="buildService" lazy="true">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <argument>ContentLanguage</argument>
+        </service>
+
+        <!-- Helpers -->
+        
+        <service class="Siso\Bundle\ContentLoaderBundle\ValueObject\Diff" id="siso.content_loader.object_diff" public="false">
+            <argument/>
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\ValueObject\Collection" id="siso.content_loader.object_collection" public="false">
+            <argument/>
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\Loader\NodeVisitorCollection" id="siso.content_loader.visitor_collection" public="false">
+            <argument/>
+        </service>
+
+        <!-- Node visitors -->
+        
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\ContentLanguage" id="siso.content_loader.visitor.language" public="false">
+            <argument id="ezpublish.api.service.content_language" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\UserGroup" id="siso.content_loader.visitor.user_group" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <argument id="siso.content_loader.object_collection" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\User" id="siso.content_loader.visitor.user" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <argument id="siso.content_loader.object_collection" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Content" id="siso.content_loader.visitor.content" public="false">
+            <argument id="ezpublish.api.service.content" type="service"/>
+            <argument id="ezpublish.api.service.location" type="service"/>
+            <argument id="ezpublish.api.service.content_type" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Role" id="siso.content_loader.visitor.role" public="false">
+            <argument id="ezpublish.api.service.role" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\ContentType" id="siso.content_loader.visitor.content_type" public="false">
+            <argument id="ezpublish.api.service.content_type" type="service"/>
+            <argument id="siso.content_loader.object_diff" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\FieldDefinition" id="siso.content_loader.visitor.field_definition" public="false">
+            <argument id="ezpublish.api.service.content_type" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Policy" id="siso.content_loader.visitor.role_policy" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\PolicyLimitation" id="siso.content_loader.visitor.role_policy_limitation" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\XmlTextField" id="siso.content_loader.visitor.xml_text_field" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\MatrixField" id="siso.content_loader.visitor.matrix_field" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\FileField" id="siso.content_loader.visitor.file_field" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <argument id="file_locator" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\PolicyLimitationValues" id="siso.content_loader.visitor.policy_limitation_values" public="false">
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <!-- Loaders -->
+        
+        <service class="%siso.content_loader.loader.class%" id="siso.content_loader.loader">
+            <argument id="siso.content_loader.visitor_collection" type="service"/>
+        </service>
+
+        <service id="siso.content_loader.database_schema_creator" class="%siso.content_loader.database_schema_creator.class%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="ezpublish.config.resolver"/>
+            <argument type="service" id="ezpublish_legacy.persistence_cache_purger"/>
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="siso.content_loader.fixture_loader" class="%siso.content_loader.fixture_loader.class%">
+            <argument type="service" id="ezpublish.api.repository"/>
+            <argument type="service" id="siso.content_loader.loader"/>
+            <argument type="service" id="siso.content_loader.database_schema_creator"/>
+            <argument type="service" id="file_locator"/>
+        </service>
+    </services>
+</container>
