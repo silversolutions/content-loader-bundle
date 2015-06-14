@@ -1,0 +1,31 @@
+languages:
+    english:
+        language_code: eng-US
+        name: English (US)
+
+content_types:
+    article:
+        identifier: content_article
+        names:
+            eng-US: Article
+        name_schema: <name>
+        field_definitions:
+            name:
+                identifier: name
+                field_type_identifier: ezstring
+                names:
+                    eng-US: Name
+            ses_short_description:
+                identifier: description
+                field_type_identifier: ezxmltext
+                names:
+                    eng-US: 'Description'
+
+content:
+    impressum:
+        content_type: article
+        fields:
+            title:
+                eng-US: Impressum
+            intro:
+                eng-US: <paragraph>This article describes how to use ContentLoaderBundle.</paragraph>
