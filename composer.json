@@ -4,7 +4,7 @@
   "require": {
     "php": ">=5.5.0",
     "ezsystems/ezpublish-kernel": "~5.3 | >=2014.11",
-    "symfony/symfony": "~2.3"
+    "doctrine/orm": "~2.3"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.1.3"
