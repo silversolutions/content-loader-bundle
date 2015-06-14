@@ -63,7 +63,7 @@ abstract class RepositoryTestCase extends \PHPUnit_Framework_TestCase
             $contentTypeService
                 ->expects($this->any())
                 ->method('loadContentTypeByIdentifier')
-                ->willReturn([new ContentType(['fieldDefinitions' => []])]);
+                ->willReturn(new ContentType(['fieldDefinitions' => []]));
         } else {
             $contentTypeService
                 ->expects($this->any())
