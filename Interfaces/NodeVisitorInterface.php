@@ -2,8 +2,6 @@
 
 namespace Siso\Bundle\ContentLoaderBundle\Interfaces;
 
-use Siso\Bundle\ContentLoaderBundle\Tree\Node;
-
 /**
  * Interface for tree node visitors
  */

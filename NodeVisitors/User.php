@@ -2,7 +2,6 @@
 
 namespace Siso\Bundle\ContentLoaderBundle\NodeVisitors;
 
-use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\Repository;
 use eZ\Publish\API\Repository\UserService;
@@ -19,10 +18,6 @@ class User extends AbstractContentLoader
      */
     private $userService;
     /**
-     * @var ContentTypeService
-     */
-    private $contentTypeService;
-    /**
      * @var ValueObjectCollectionInterface
      */
     private $objectCollection;
@@ -31,7 +26,6 @@ class User extends AbstractContentLoader
     {
         parent::__construct($repository);
         $this->userService = $this->repository->getUserService();
-        $this->contentTypeService = $this->repository->getContentTypeService();
         $this->objectCollection = $objectStorage;
     }
 

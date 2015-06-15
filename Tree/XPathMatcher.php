@@ -35,7 +35,7 @@ class XPathMatcher
         $testedNode = $node;
         foreach ($xpathExpressionItems as $token) {
 
-            if($testedNode == null) {
+            if($testedNode === null) {
                 return false;
             }
 
@@ -43,14 +43,8 @@ class XPathMatcher
             if ($token == '/') {
                 // If it ia also root of node subtree then matching is over and this node matches
                 // otherwise this node doesn't match (there are more nodes in the subtree)
-                return ($testedNode->getParent() == null);
+                return ($testedNode->getParent() === null);
             }
-
-//            if($testedNode->getParent() === null) {
-//                // XPath doesn't match given node path
-//                return false;
-//            }
-
 
             if (!preg_match_all($this->pattern, $token, $matches)) {
                 throw new XPathMatcherException('Invalid xpath item syntax: '.$token);
