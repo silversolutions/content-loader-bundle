@@ -1,5 +1,7 @@
 # ContentLoaderBundle
 
+[![Build Status](https://travis-ci.org/silversolutions/content-loader-bundle.svg?branch=TravisConfig)](https://travis-ci.org/silversolutions/content-loader-bundle)
+
 There is 2 main ideas behind this bundle:
 
  * Load collections of items (content types, user roles, users, content items) to eZ Publish database from straight-forward yaml files.
