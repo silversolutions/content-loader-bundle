@@ -9,8 +9,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetParent()
     {
-        $node = new Node();
-
+        $this->markTestSkipped();
     }
 
 }

@@ -67,8 +67,8 @@ ezpublish/console siso:fixtures:load /path/to/article.yml
 * Object states
 
 ### Limitations
-Currently the bundle mainly useful for creating new items. Update of existing content is supported only for content types.
-
+* Currently the bundle mainly useful for creating new items. Update of existing content is supported only for content types.
+* DatabaseSchemaLoader supports only mysql
 
 ### See also
  * [eZ Publish](http://en.wikipedia.org/wiki/EZ_Publish)
