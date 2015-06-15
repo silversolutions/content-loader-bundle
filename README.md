@@ -7,7 +7,7 @@ There is 2 main ideas behind this bundle:
 
 You can describe an initial state of your application in yaml format and use it either for project installation or for running tests in a test environment.
 
-Example. Lets consider you have a file article.yml:
+Example. Lets consider you have a file Resources/example/article.yml:
 
 ```yaml
 languages:
