@@ -5,4 +5,5 @@ php:
 before_script:
     - composer self-update
     - composer install
-script: phpunit Tests    
+script:
+    - phpunit -c phpunit.xml.dist
