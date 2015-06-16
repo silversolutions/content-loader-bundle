@@ -94,7 +94,7 @@ class ContentType extends AbstractValueObjectLoader
         $this->fillValueObject($struct, $data);
 
         $diff = $this->diff->diff($contentType->fieldDefinitions, $data['field_definitions'], 'identifier');
-        // @todo: introduce field updates (now only remove and add are supported)
+        // introduce field updates (now only remove and add are supported) must be implemented
 
         $this->updateDraftFields($draft, $diff, $data);
         $this->contentTypeService->updateContentTypeDraft($draft, $struct);
@@ -119,7 +119,7 @@ class ContentType extends AbstractValueObjectLoader
         }
 
         // Add fields which are missing in the old content type
-        $fieldStructs = $data['field_definitions'];//$this->getFieldDefinitionCreateStructs($data);
+        $fieldStructs = $data['field_definitions'];
         foreach ($fieldStructs as $fieldStruct) {
             if (in_array($fieldStruct->identifier, $diff['add'])) {
                 $this->contentTypeService->addFieldDefinition($draft, $fieldStruct);

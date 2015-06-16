@@ -116,7 +116,7 @@ class Node implements Iterator, TreeNodeInterface
      */
     public function getIndex()
     {
-        if($this->getParent() == null) {
+        if($this->getParent() === null) {
             return 0;
         }
         $parentKeys = array_keys($this->getParent()->getChildren());
