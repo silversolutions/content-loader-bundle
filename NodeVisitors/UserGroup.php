@@ -53,8 +53,9 @@ class UserGroup extends AbstractContentLoader
         $this->fillValueObject($struct, $data, ['content_type']);
 
         $defaultUserGroup = $this->userService->loadUserGroup(self::DEFAULT_USER_GROUP_ID);
+        // @todo: process parent user group
         $userGroup = $this->userService->createUserGroup($struct, $defaultUserGroup);
-        $this->objectCollection->add('user_groups', $node->getName(), $userGroup);
+        $this->saveUserGroupDataToCollection($node, $userGroup);
 
         if (isset($data['roles'])) {
             foreach ($data['roles'] as $roleId) {
@@ -66,5 +67,18 @@ class UserGroup extends AbstractContentLoader
         }
 
         return $userGroup;
+    }
+
+    /**
+     * @param TreeNodeInterface $node
+     * @param $userGroup
+     */
+    private function saveUserGroupDataToCollection(TreeNodeInterface $node, $userGroup)
+    {
+        $this->objectCollection->add('content_items', $node->getName(), $userGroup->id);
+        // Add location to the location list
+        if (isset($userGroup->contentInfo)) {
+            $this->objectCollection->add('locations', $node->getName(), $userGroup->contentInfo->mainLocationId);
+        }
     }
 }

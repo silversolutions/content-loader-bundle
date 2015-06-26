@@ -2,6 +2,7 @@
 
 namespace Siso\Bundle\ContentLoaderBundle\NodeVisitors;
 
+use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\Repository;
 use eZ\Publish\API\Repository\UserService;
@@ -18,6 +19,10 @@ class User extends AbstractContentLoader
      */
     private $userService;
     /**
+     * @var ContentTypeService
+     */
+    private $contentTypeService;
+    /**
      * @var ValueObjectCollectionInterface
      */
     private $objectCollection;
@@ -26,6 +31,7 @@ class User extends AbstractContentLoader
     {
         parent::__construct($repository);
         $this->userService = $this->repository->getUserService();
+        $this->contentTypeService = $this->repository->getContentTypeService();
         $this->objectCollection = $objectStorage;
     }
 
@@ -48,9 +54,7 @@ class User extends AbstractContentLoader
 
         if (!$this->isExistingUser($data['login'])) {
             $userStruct = $this->getUserStruct($data);
-            $userGroups = $this->objectCollection->getList('user_groups', $data['groups']);
-            // @todo: process situation when user groups is not specified
-            // or change code in the same way like in content
+            $userGroups = $this->getParentGroups($data);
             $user = $this->userService->createUser($userStruct, $userGroups);
         } else {
             $user = $this->userService->loadUserByLogin($data['login']);
@@ -98,5 +102,20 @@ class User extends AbstractContentLoader
         $this->fillValueObject($struct, $data, ['content_type']);
 
         return $struct;
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    private function getParentGroups(&$data)
+    {
+        $userGroupIds = $this->objectCollection->getList('content_items', $data['groups']);
+        $userGroups = [];
+        foreach ($userGroupIds as $userGroupId) {
+            $userGroups[] = $this->userService->loadUserGroup($userGroupId);
+        }
+
+        return $userGroups;
     }
 }
