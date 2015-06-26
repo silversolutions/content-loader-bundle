@@ -3,7 +3,7 @@
 namespace Siso\Bundle\ContentLoaderBundle\NodeVisitors;
 
 /**
- * Abstract loader for fetures based on content model: content, users, user groups.
+ * Abstract loader for features based on content model: content, users, user groups.
  */
 abstract class AbstractContentLoader extends AbstractValueObjectLoader
 {
