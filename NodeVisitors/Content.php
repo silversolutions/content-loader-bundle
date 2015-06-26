@@ -6,6 +6,7 @@ use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\LocationService;
 use Siso\Bundle\ContentLoaderBundle\Interfaces\TreeNodeInterface;
+use Siso\Bundle\ContentLoaderBundle\Interfaces\ValueObjectCollectionInterface;
 
 /**
  * Loader for content objects
@@ -13,7 +14,7 @@ use Siso\Bundle\ContentLoaderBundle\Interfaces\TreeNodeInterface;
 class Content extends AbstractContentLoader
 {
     /**
-     * eZ Publish default loction id
+     * eZ Publish default location id
      */
     const DEFAULT_LOCATION_ID = 2;
     /**
@@ -25,22 +26,24 @@ class Content extends AbstractContentLoader
      */
     private $locationService;
     /**
-     * @var int[]
-     */
-    private $locations = [];
-    /**
      * @var ContentTypeService
      */
     private $contentTypeService;
+    /**
+     * @var ValueObjectCollectionInterface
+     */
+    private $objectCollection;
 
     public function __construct(
         ContentService $contentService,
         LocationService $locationService,
-        ContentTypeService $contentTypeService
+        ContentTypeService $contentTypeService,
+        ValueObjectCollectionInterface $objectCollection
     ) {
         $this->contentService = $contentService;
         $this->locationService = $locationService;
         $this->contentTypeService = $contentTypeService;
+        $this->objectCollection = $objectCollection;
     }
 
     /**
@@ -70,7 +73,11 @@ class Content extends AbstractContentLoader
 
         // Add location to the location list
         if (isset($publishedContent->contentInfo)) {
-            $this->locations[$node->getName()] = $publishedContent->contentInfo->mainLocationId;
+            $this->objectCollection->add('locations', $node->getName(), $publishedContent->contentInfo->mainLocationId);
+        }
+        // Add content to content list
+        if (isset($publishedContent->contentInfo)) {
+            $this->objectCollection->add('content_items', $node->getName(), $publishedContent->id);
         }
 
         return $publishedContent;
@@ -119,9 +126,9 @@ class Content extends AbstractContentLoader
     {
         $locationId = $defaultLocationId;
         if (array_key_exists('parent', $data)) {
-            $contentDataName = $data['parent'];
-            if (array_key_exists($contentDataName, $this->locations)) {
-                $locationId = $this->locations[$contentDataName];
+            $locations = $this->objectCollection->getList('locations', [$data['parent']]);
+            if ($locations) {
+                $locationId = $locations[0];
             }
         }
 

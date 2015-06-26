@@ -5,6 +5,7 @@ namespace Siso\Bundle\ContentLoaderBundle\Tests\NodeVisitors;
 use Siso\Bundle\ContentLoaderBundle\NodeVisitors\Content;
 use Siso\Bundle\ContentLoaderBundle\Tests\TestCases\RepositoryTestCase;
 use Siso\Bundle\ContentLoaderBundle\Tree\Node;
+use Siso\Bundle\ContentLoaderBundle\ValueObject\Collection;
 
 class ContentTest extends RepositoryTestCase
 {
@@ -19,7 +20,8 @@ class ContentTest extends RepositoryTestCase
         $contentLoader = new Content(
             $this->getContentServiceMock($testParameters),
             $this->getLocationServiceMock($testParameters),
-            $this->getContentTypeServiceMock(['loaded_content_type_kind' => 'empty'])
+            $this->getContentTypeServiceMock(['loaded_content_type_kind' => 'empty']),
+            new Collection()
         );
 
         $node = new Node('some article', null);

@@ -58,6 +58,7 @@
             <argument id="ezpublish.api.service.content" type="service"/>
             <argument id="ezpublish.api.service.location" type="service"/>
             <argument id="ezpublish.api.service.content_type" type="service"/>
+            <argument id="siso.content_loader.object_collection" type="service"/>
             <tag name="siso.content_loader.visitor" />
         </service>
 

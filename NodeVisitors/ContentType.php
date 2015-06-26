@@ -13,14 +13,11 @@ use Siso\Bundle\ContentLoaderBundle\ValueObject\Diff;
  */
 class ContentType extends AbstractValueObjectLoader
 {
+    const DEFAULT_GROUP_NAME = 'Content';
     /**
      * @var ContentTypeService
      */
     private $contentTypeService;
-    /**
-     * @var \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup
-     */
-    private $defaultGroup;
     /**
      * @var Diff
      */
@@ -33,7 +30,6 @@ class ContentType extends AbstractValueObjectLoader
     public function __construct(ContentTypeService $contentTypeService, Diff $diff)
     {
         $this->contentTypeService = $contentTypeService;
-        $this->defaultGroup = $this->contentTypeService->loadContentTypeGroupByIdentifier('Content');
         $this->diff = $diff;
     }
 
@@ -139,7 +135,8 @@ class ContentType extends AbstractValueObjectLoader
         $this->fillValueObject($struct, $data);
         $struct->mainLanguageCode = $this->getContentDataMainLanguage($data);
 
-        return $this->contentTypeService->createContentType($struct, [$this->defaultGroup]);
+        $groups = $this->getContentTypeGroups($data);
+        return $this->contentTypeService->createContentType($struct, $groups);
     }
 
     /**
@@ -154,5 +151,26 @@ class ContentType extends AbstractValueObjectLoader
         $names = array_keys($data['names']);
 
         return $names[0];
+    }
+
+    /**
+     * Get content type groups from content type data
+     *
+     * @param array $data
+     * @return array
+     */
+    private function getContentTypeGroups(array &$data)
+    {
+        $groupNames = [self::DEFAULT_GROUP_NAME];
+        $groups = [];
+        if(isset($data['groups'])) {
+            $groupNames = $data['groups'];
+        }
+
+        foreach ($groupNames as $groupName) {
+            $groups[] = $this->contentTypeService->loadContentTypeGroupByIdentifier($groupName);
+        }
+
+        return $groups;
     }
 }
