@@ -55,6 +55,7 @@ class User extends AbstractContentLoader
         if (!$this->isExistingUser($data['login'])) {
             $userStruct = $this->getUserStruct($data);
             $userGroups = $this->getParentGroups($data);
+
             $user = $this->userService->createUser($userStruct, $userGroups);
         } else {
             $user = $this->userService->loadUserByLogin($data['login']);

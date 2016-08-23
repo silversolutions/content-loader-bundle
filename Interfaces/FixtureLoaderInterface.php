@@ -13,15 +13,17 @@ interface FixtureLoaderInterface
      * e.g. @AcmeBundle/Resources/fixture.yml
      *
      * @param $path
+     * @param $remove
      * @return mixed  bunle syntax
      */
-    public function loadFromFile($path);
+    public function loadFromFile($path, $remove);
 
     /**
      * Load fixtures from data array
      *
      * @param array $data
+     * @param $remove
      * @return void
      */
-    public function load($data);
+    public function load($data, $remove);
 }

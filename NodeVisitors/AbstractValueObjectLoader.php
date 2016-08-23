@@ -49,6 +49,7 @@ abstract class AbstractValueObjectLoader implements NodeVisitorInterface
                 $valueObject->$propertyName = $value;
             } catch (\Exception $e) {
                 // Ignore unsupported properties
+
             }
         }
     }

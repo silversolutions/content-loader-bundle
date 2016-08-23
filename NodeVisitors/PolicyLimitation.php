@@ -3,6 +3,7 @@
 namespace Siso\Bundle\ContentLoaderBundle\NodeVisitors;
 
 use eZ\Publish\API\Repository\Values\User\Limitation\SiteAccessLimitation;
+use eZ\Publish\API\Repository\Values\User\Limitation\SectionLimitation;
 use Siso\Bundle\ContentLoaderBundle\Interfaces\TreeNodeInterface;
 
 /**
@@ -28,6 +29,10 @@ class PolicyLimitation extends AbstractValueObjectLoader
         switch ($data['identifier']) {
             case 'SiteAccess':
                 $limitation = new SiteAccessLimitation();
+                break;
+            case 'Section':
+                $limitation = new SectionLimitation();
+                break;
             // @todo: add other limitations
         }
 

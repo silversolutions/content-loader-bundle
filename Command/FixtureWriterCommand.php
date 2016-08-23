@@ -9,16 +9,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class FixtureLoaderCommand extends ContainerAwareCommand
+class FixtureWriterCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('siso:fixtures:load')
-            ->setDescription('Load fixtures for integration tests')
-            ->addOption('removedatabase','r',
-                InputOption::VALUE_NONE,
-                'if database should be replaces by fresh one, default no')
+            ->setName('siso:fixtures:write')
+            ->setDescription('stroes fixtures in yml files')
+            ->addArgument(
+                'location_id',
+                InputOption::VALUE_REQUIRED,
+                <<<'EOD'
+The location id which sall be exported
+EOD
+            )
+            ->addArgument(
+                'depth',
+                InputOption::VALUE_REQUIRED,
+                <<<'EOD'
+The depth to be used
+EOD
+            )
             ->addArgument(
                 'path',
                 InputOption::VALUE_REQUIRED,
@@ -34,23 +45,22 @@ EOD
         // @todo: Check if environment is test
         // Warn about data removal
 
-        $fixtureLoader = $this->getContainer()->get('siso.content_loader.fixture_loader');
+        $fixtureWriter = $this->getContainer()->get('siso.content_loader.fixture_writer');
 
-        $fixtureLoader->setProgressCallback(
-            function ($message) use ($output) {
-                $output->writeln($message);
-            }
+        $fixtureWriter->setProgressCallback(
+        function ($message) use ($output) {
+            $output->writeln($message);
+        }
         );
 
         $watch = new Stopwatch();
         $watch->start('All');
 
-        $removedatabase = false;
-        if ($input->getOption('removedatabase')) {
-            $removedatabase = true;
-        }
 
-        $fixtureLoader->loadFromFile($input->getArgument('path'), $removedatabase);
+        $fixtureWriter->saveToFile(
+            $input->getArgument('path'),
+            $input->getArgument('location_id'),
+            $input->getArgument('depth'));
 
         $result = $watch->stop('All');
         $output->writeln('Script time: ' . $result->getDuration() / 1000 .' sec');

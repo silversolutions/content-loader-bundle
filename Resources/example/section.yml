@@ -1,0 +1,19 @@
+sections:
+    components:
+        identifier: components_new
+        name: Componentsnew
+content:
+    products:
+        content_type: ses_category
+        fields:
+            ses_name:
+                eng-US: Products NEW
+                ger-DE: Produkte Neu
+        priority: 1
+        parent: 11852
+        section: components_new
+        unique:
+            field: ses_name
+            scope: same_location
+            value: Products NEW
+            strategy: skip

@@ -8,6 +8,7 @@
         <parameter key="siso.content_loader.database_schema_creator.class">Siso\Bundle\ContentLoaderBundle\Loader\DatabaseSchemaCreator</parameter>
         <parameter key="siso.content_loader.fixture_loader.class">Siso\Bundle\ContentLoaderBundle\Loader\FixtureLoader</parameter>
         <parameter key="siso.content_loader.loader.class">Siso\Bundle\ContentLoaderBundle\Loader\ContentLoader</parameter>
+        <parameter key="siso.content_loader.fixture_writer.class">Siso\Bundle\ContentLoaderBundle\Writer\FixtureWriter</parameter>
     </parameters>
     
     <services>
@@ -59,6 +60,13 @@
             <argument id="ezpublish.api.service.location" type="service"/>
             <argument id="ezpublish.api.service.content_type" type="service"/>
             <argument id="siso.content_loader.object_collection" type="service"/>
+            <argument id="ezpublish.api.service.section" type="service"/>
+            <argument id="ezpublish.api.service.search" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Section" id="siso.content_loader.visitor.section" public="false">
+            <argument id="ezpublish.api.service.section" type="service"/>
             <tag name="siso.content_loader.visitor" />
         </service>
 
@@ -89,6 +97,16 @@
         </service>
 
         <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\XmlTextField" id="siso.content_loader.visitor.xml_text_field" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\CheckboxField" id="siso.content_loader.visitor.checkbox_field" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\SelectionField" id="siso.content_loader.visitor.selection_field" public="false">
             <argument id="ezpublish.api.repository" type="service"/>
             <tag name="siso.content_loader.visitor" />
         </service>
@@ -127,5 +145,11 @@
             <argument type="service" id="siso.content_loader.database_schema_creator"/>
             <argument type="service" id="file_locator"/>
         </service>
+
+        <service id="siso.content_loader.fixture_writer" class="%siso.content_loader.fixture_writer.class%">
+            <argument type="service" id="ezpublish.api.repository"/>
+            <argument type="service" id="file_locator"/>
+        </service>
+
     </services>
 </container>

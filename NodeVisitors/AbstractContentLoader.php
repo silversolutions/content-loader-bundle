@@ -16,7 +16,16 @@ abstract class AbstractContentLoader extends AbstractValueObjectLoader
         $valueObject->mainLanguageCode = $this->getContentDataMainLanguage($data);
         foreach ($data['fields'] as $fieldIdentifier => $translations) {
             foreach ($translations as $languageCode => $fieldValue) {
-                $valueObject->setField($fieldIdentifier, $fieldValue, $languageCode);
+                try {
+                    if (!is_null($fieldValue))
+                    {
+                        $valueObject->setField($fieldIdentifier, $fieldValue, $languageCode);
+                    }
+
+                } catch (\Exception $e) {
+                    echo "Field error with ".$fieldIdentifier. "\n";
+                }
+
             }
         }
     }

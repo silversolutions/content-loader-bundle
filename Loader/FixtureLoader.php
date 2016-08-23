@@ -50,20 +50,24 @@ class FixtureLoader implements FixtureLoaderInterface
     /**
      * @inheritdoc
      */
-    public function loadFromFile($path)
+    public function loadFromFile($path, $remove)
     {
         $path = $this->fileLocator->locate($path);
         $data = $this->loadYamlFile($path);
-        $this->load($data);
+        $this->load($data, $remove);
     }
 
     /**
      * @inheritdoc
      */
-    public function load($data)
+    public function load($data, $remove)
     {
-        $this->doProgress('Creating database schema...');
-        $this->databaseSchemaCreator->createSchema();
+        if ($remove) {
+
+            $this->doProgress('Creating database schema...');
+            $this->databaseSchemaCreator->createSchema();
+        }
+
 
         $this->doProgress('Loading fixtures...');
         // Always use repositoty sudo to get access for content creation

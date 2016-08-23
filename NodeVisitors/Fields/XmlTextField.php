@@ -17,11 +17,14 @@ class XmlTextField extends AbstractFieldLoader
         if($this->getContentTypeIdentifier($node) !== 'ezxmltext') {
             return null;
         }
+        if (substr($node->getValue(),0,5) == '<?xml') {
+            return $node->getValue();
+        }
         return '<?xml version="1.0" encoding="utf-8"?>' .
-            '<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/"' .
-            'xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/"' .
-            'xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"' .
-            'xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">' .
+            '<section xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/" ' .
+            'xmlns:image="http://ez.no/namespaces/ezpublish3/image/" ' .
+            ' xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/">' .
+
             $node->getValue() .
             '</section>';
     }

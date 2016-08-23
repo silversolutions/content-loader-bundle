@@ -29,3 +29,27 @@ content:
                 eng-US: Impressum
             intro:
                 eng-US: <paragraph>This article describes how to use ContentLoaderBundle.</paragraph>
+
+
+content:
+    content_304:
+        content_type: folder
+        priority: 0
+        parent: 12442
+        fields:
+            name:
+                ger-DE: Textmodules
+            short_name:
+                ger-DE: ''
+            short_description:
+                ger-DE: "<paragraph>This article describes how to use ContentLoaderBundle.</paragraph>"
+            description:
+                ger-DE: "<paragraph>This article describes how to use ContentLoaderBundle.</paragraph>"
+            show_children:
+                ger-DE: '1'
+            call_for_action:
+                ger-DE: ''
+            tags:
+                ger-DE: ''
+            layout:
+                ger-DE: ''

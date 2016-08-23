@@ -27,10 +27,17 @@ class Collection implements ValueObjectCollectionInterface
      */
     public function getList($groupName, $names)
     {
+
         $result = [];
         foreach ($this->items[$groupName] as $name => $valueObject) {
             if (in_array($name, $names)) {
                 $result[] = $valueObject;
+            }
+        }
+        // check if loaction id are used
+        foreach ($names as $name) {
+            if (is_integer($name)) {
+                $result[] = $name;
             }
         }
 

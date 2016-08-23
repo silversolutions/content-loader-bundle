@@ -31,10 +31,18 @@ class FileField extends AbstractFieldLoader
      */
     public function visit(TreeNodeInterface $node, &$data)
     {
-        if ($this->getContentTypeIdentifier($node) !== 'ezimage') {
+        if (($this->getContentTypeIdentifier($node) !== 'ezimage') &&
+            ($this->getContentTypeIdentifier($node) !== 'ezfile')) {
             return null;
         }
 
-        return $this->fileLocator->locate($data);
+        try {
+            $path = $this->fileLocator->locate($data);
+        } catch (\Exception $e) {
+            $data = null;
+            return null;
+        }
+
+        return $path;
     }
 }
