@@ -52,6 +52,7 @@
         <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\User" id="siso.content_loader.visitor.user" public="false">
             <argument id="ezpublish.api.repository" type="service"/>
             <argument id="siso.content_loader.object_collection" type="service"/>
+            <argument id="ezpublish.connection" type="service"/>
             <tag name="siso.content_loader.visitor" />
         </service>
 

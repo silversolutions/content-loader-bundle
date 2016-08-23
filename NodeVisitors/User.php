@@ -8,6 +8,7 @@ use eZ\Publish\API\Repository\Repository;
 use eZ\Publish\API\Repository\UserService;
 use Siso\Bundle\ContentLoaderBundle\Interfaces\TreeNodeInterface;
 use Siso\Bundle\ContentLoaderBundle\Interfaces\ValueObjectCollectionInterface;
+use eZ\Publish\Core\Persistence\Database\DatabaseHandler;
 
 /**
  * Loader for users
@@ -26,13 +27,22 @@ class User extends AbstractContentLoader
      * @var ValueObjectCollectionInterface
      */
     private $objectCollection;
+    /**
+     * @var  \eZ\Publish\Core\Persistence\Database\DatabaseHandler
+     */
+    private $dbConnection;
 
-    public function __construct(Repository $repository, ValueObjectCollectionInterface $objectStorage)
+    public function __construct(
+            Repository $repository,
+            ValueObjectCollectionInterface $objectStorage,
+            DatabaseHandler $dbConnection
+     )
     {
         parent::__construct($repository);
         $this->userService = $this->repository->getUserService();
         $this->contentTypeService = $this->repository->getContentTypeService();
         $this->objectCollection = $objectStorage;
+        $this->dbConnection = $dbConnection;
     }
 
     /**
@@ -54,13 +64,26 @@ class User extends AbstractContentLoader
 
         if (!$this->isExistingUser($data['login'])) {
             $userStruct = $this->getUserStruct($data);
-            $userGroups = $this->getParentGroups($data);
+
+            if (isset($data['parentContentId'])) {
+                echo "getusergroup by parentid ".$data['parentContentId']."\n";
+                $userGroups = $this->getParentGroupsByLocationId($data['parentContentId']);
+            } else {
+                $userGroups = $this->getParentGroups($data);
+            }
+
 
             $user = $this->userService->createUser($userStruct, $userGroups);
+
         } else {
             $user = $this->userService->loadUserByLogin($data['login']);
             // @todo: update of user object is not implemented
         }
+        if (isset($data['passwordhash']) && !empty($data['passwordhash']) && $user->id > 0) {
+            echo "Set password hash ";
+            $this->setPasswordhash($user->id, $data['passwordhash']);
+        }
+
 
         if (isset($data['roles'])) {
             foreach ($data['roles'] as $roleId) {
@@ -105,6 +128,13 @@ class User extends AbstractContentLoader
         return $struct;
     }
 
+    private function getParentGroupsByLocationId($userGroupId) {
+
+        $userGroups = [];
+        $userGroups[] = $this->userService->loadUserGroup($userGroupId);
+        return $userGroups;
+    }
+
     /**
      * @param $data
      * @return array
@@ -118,5 +148,32 @@ class User extends AbstractContentLoader
         }
 
         return $userGroups;
+    }
+
+    /**
+     * Update the password hash in the database
+     * @param $userId
+     * @param $passwordhash
+     * @return boolean
+     */
+    private function setPasswordhash($userId, $passwordhash)
+    {
+        try {
+            $db = $this->dbConnection;
+            $statement = $db->prepare(
+                sprintf('UPDATE ezuser
+                    set password_hash = \'%s\'
+                    WHERE contentobject_id=%d;',
+                            $passwordhash,
+                            $userId
+                            )
+                        );
+
+            $statement->execute();
+        } catch (\Exception $e) {
+            echo "Exception setPasswordhash($userId, $passwordhash): ".$e->getMessage();
+            return false;
+        }
+        return true;
     }
 }

@@ -34,6 +34,7 @@ EOD
         // @todo: Check if environment is test
         // Warn about data removal
 
+
         $fixtureLoader = $this->getContainer()->get('siso.content_loader.fixture_loader');
 
         $fixtureLoader->setProgressCallback(

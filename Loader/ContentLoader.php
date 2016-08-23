@@ -62,8 +62,7 @@ class ContentLoader implements ContentLoaderInterface
 
             return $data;
         } catch (\Exception $exception) {
-           // print_r($exception); exit;
-            throw new NodeDataLoadException('Error loading data from '.$node->getPath(), $exception);
+            throw new NodeDataLoadException('Error loading data from '.$node->getPath(). "  ".$exception->getMessage(), $exception);
         }
     }
 }
