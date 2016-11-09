@@ -122,7 +122,9 @@ class FixtureWriter
         $id = 'location_'.$locationId;
         $fieldList = array();
         foreach ($fieldDefinitions as $fieldDefinition) {
-           if ($fieldDefinition->fieldTypeIdentifier == 'ezpage') {
+            
+            if (in_array( $fieldDefinition->fieldTypeIdentifier,
+                array('ezpage','ezauthor','ezcomcomments','ezgmaplocation','ezdatetime','ezsrrating'))) {
                continue;
            }
            foreach ($languages as $lang) {
