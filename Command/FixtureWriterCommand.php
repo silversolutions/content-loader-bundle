@@ -15,12 +15,12 @@ class FixtureWriterCommand extends ContainerAwareCommand
     {
         $this
             ->setName('siso:fixtures:write')
-            ->setDescription('stroes fixtures in yml files')
+            ->setDescription('dumps fixtures in yml files')
             ->addArgument(
                 'location_id',
                 InputOption::VALUE_REQUIRED,
                 <<<'EOD'
-The location id which sall be exported
+The location id which shall be exported
 EOD
             )
             ->addArgument(
@@ -37,6 +37,12 @@ EOD
 Path to the fixture file. It is allowed to use @Bundle shortcut syntax,
 e.g. @SisoTestToolsBundle/Resources/fixtures/default/all.yml
 EOD
+            )->addArgument(
+                'writer_service_id',
+                InputOption::VALUE_OPTIONAL,
+                <<<'EOD'
+Service id of write to be used: default is siso.content_loader.fixture_writer option siso.content_loader.textmodule_writer
+EOD
             );
     }
 
@@ -45,7 +51,15 @@ EOD
         // @todo: Check if environment is test
         // Warn about data removal
 
-        $fixtureWriter = $this->getContainer()->get('siso.content_loader.fixture_writer');
+        $serviceId = $input->getArgument('writer_service_id');
+
+        if (!$serviceId) {
+            $serviceId = 'siso.content_loader.fixture_writer';
+        } else {
+            $serviceId = $serviceId[0];
+        }
+
+        $fixtureWriter = $this->getContainer()->get($serviceId);
 
         $fixtureWriter->setProgressCallback(
         function ($message) use ($output) {

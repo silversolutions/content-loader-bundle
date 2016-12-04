@@ -9,6 +9,7 @@
         <parameter key="siso.content_loader.fixture_loader.class">Siso\Bundle\ContentLoaderBundle\Loader\FixtureLoader</parameter>
         <parameter key="siso.content_loader.loader.class">Siso\Bundle\ContentLoaderBundle\Loader\ContentLoader</parameter>
         <parameter key="siso.content_loader.fixture_writer.class">Siso\Bundle\ContentLoaderBundle\Writer\FixtureWriter</parameter>
+        <parameter key="siso.content_loader.textmodule_writer.class">Siso\Bundle\ContentLoaderBundle\Writer\TextModuleWriter</parameter>
     </parameters>
     
     <services>
@@ -148,6 +149,11 @@
         </service>
 
         <service id="siso.content_loader.fixture_writer" class="%siso.content_loader.fixture_writer.class%">
+            <argument type="service" id="ezpublish.api.repository"/>
+            <argument type="service" id="file_locator"/>
+        </service>
+
+        <service id="siso.content_loader.textmodule_writer" class="%siso.content_loader.textmodule_writer.class%">
             <argument type="service" id="ezpublish.api.repository"/>
             <argument type="service" id="file_locator"/>
         </service>

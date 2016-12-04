@@ -14,10 +14,10 @@ use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\API\Repository\Values\Content\Field;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Config\FileLocatorInterface;
+use Siso\Bundle\ContentLoaderBundle\Writer\FixtureWriter;
 
 
-
-class FixtureWriter
+class TextModuleWriter extends FixtureWriter
 {
     use ProgressAwareTrait;
     use YamlParserTrait;
@@ -70,17 +70,18 @@ class FixtureWriter
      */
     private function getDocuments(&$objectList, $locationId, $depth)
     {
-        $location = $this->repository->getLocationService()->loadLocation( $locationId );
-        $objectList  = array_merge($objectList, $this->getData( $locationId ));
-        try {
 
+        try {
+            $location = $this->repository->getLocationService()->loadLocation( $locationId );
+            $objectList  = array_merge($objectList, $this->getData( $locationId ));
         } catch (\Exception $e) {
-            echo 'Problem with location '.$locationId.': '.$e->getMessage()."\n";
+            echo 'Problem loading location '.$locationId.': '.$e->getMessage()."\n";
         }
 
         if ($depth == 0) {
             return;
         }
+
         try {
             $childLocationList = $this->repository->getLocationService()->loadLocationChildren( $location, 0, 20 );
             foreach ( $childLocationList->locations as $childLocation )
@@ -124,11 +125,11 @@ class FixtureWriter
         $fieldList = array();
         foreach ($fieldDefinitions as $fieldDefinition) {
 
-           if (in_array( $fieldDefinition->fieldTypeIdentifier,
+            if (in_array( $fieldDefinition->fieldTypeIdentifier,
                 array('ezpage','ezauthor','ezcomcomments','ezgmaplocation','ezdatetime','ezsrrating'))) {
-               continue;
-           }
-           foreach ($languages as $lang) {
+                continue;
+            }
+            foreach ($languages as $lang) {
                 /** @var $field \eZ\Publish\API\Repository\Values\Content\Field */
                 $field = $content->getField($fieldDefinition->identifier, $lang);
                 if ($field instanceof Field) {
@@ -149,6 +150,13 @@ class FixtureWriter
             'fields' => $fieldList
 
         );
+        if ($contentTypeIdentifier == 'st_textmodule') {
+            $languages = array_keys($data[$id]['fields']['identifier']);
+            $data[$id]['unique']['field'] = 'identifier';
+            $data[$id]['unique']['value'] = $data[$id]['fields']['identifier'][$languages[0]];
+            $data[$id]['unique']['strategy'] = 'skip';
+        }
+
         $this->addMetaFields($data[$id]);
         return $data;
     }
@@ -158,7 +166,7 @@ class FixtureWriter
      */
     function addMetaFields(&$data) {
 
-         return;
+        return;
     }
 
     /**
@@ -191,4 +199,6 @@ class FixtureWriter
         return $value;
 
     }
+
+
 }
