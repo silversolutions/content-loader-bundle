@@ -30,19 +30,16 @@ class DatabaseSchemaCreator implements DatabaseSchemaCreatorInterface
     /**
      * @param EntityManagerInterface $entityManager
      * @param ConfigResolverInterface $configResolver
-     * @param CacheClearerInterface $cacheClearer
      * @param string $kernelRootDir
      */
     function __construct(
         EntityManagerInterface $entityManager,
         ConfigResolverInterface $configResolver,
-        CacheClearerInterface $cacheClearer,
         $kernelRootDir
     ) {
         $this->entityManager = $entityManager;
         $this->kernelRootDir = $kernelRootDir;
         $this->configResolver = $configResolver;
-        $this->cacheClearer = $cacheClearer;
     }
 
     /**
