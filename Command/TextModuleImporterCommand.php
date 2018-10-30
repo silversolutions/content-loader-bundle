@@ -16,6 +16,10 @@ use eZ\Publish\API\Repository\SectionService;
 use eZ\Publish\API\Repository\SearchService;
 use eZ\Publish\API\Repository\Values\Content\Query\Criterion;
 use eZ\Publish\API\Repository\Values\Content\Query;
+use eZ\Publish\API\Repository\Repository;
+
+
+
 
 class TextModuleImporterCommand extends ContainerAwareCommand
 {
@@ -84,7 +88,12 @@ EOD
 
         if (!$this->getLocationByUrl("/Components/Textmodules")) {
             $componentsId = $this->getLocationByUrl("/Components");
-            $this->createFolder($componentsId, 'Textmodules');
+            $this->ezpublishApiRepository->sudo(
+                function () use ($componentsId) {
+                    $this->createFolder($componentsId, 'Textmodules');
+                }
+            );
+
         }
 
         $this->ezpublishApiRepository->sudo(
@@ -263,7 +272,9 @@ EOD
             $contentUpdateStruct->setField( 'name', $data['name'][$language]);
             $contentUpdateStruct->setField( 'identifier', $identifier);
             $contentUpdateStruct->setField( 'context', $data['context'][$language]);
-            $contentUpdateStruct->setField( 'content', $data['content'][$language]);
+            $contentUpdateStruct->setField( 'content', '<section xmlns="http://ez.no/namespaces/ezpublish5/xhtml5/edit"><p class="paraClass">'.strip_tags($data['content'][$language]).'</p></section>');
+
+
 
             $contentDraft = $this->contentService->updateContent( $contentDraft->versionInfo, $contentUpdateStruct );
             $this->contentService->publishVersion( $contentDraft->versionInfo );
@@ -279,28 +290,32 @@ EOD
      */
     private function textModuleExists($textmoduleId, $textmoduleLocationId)
     {
-        $query = new Query();
-
-        /** @var \eZ\Publish\API\Repository\LocationService $locationService */
-        $location = $this->locationService->loadLocation($textmoduleLocationId);
-        $criteria = array(
-            new Criterion\Subtree($location->pathString),
-            new Criterion\Visibility(Criterion\Visibility::VISIBLE),
-            new Criterion\Field('identifier', Criterion\Operator::EQ, $textmoduleId),
-        );
-
-        $query->criterion = new Criterion\LogicalAnd($criteria);
-
-        $languageFilter = array();
-        $languageFilter['useAlwaysAvailable'] = true;
         try {
-            $searchResults = $this->searchService->findContent($query, $languageFilter);
-        } catch (\Exception $e) {
-            return false;
-        }
+            $query = new Query();
 
-        if ($searchResults->totalCount !== 0) {
-            return true;
+            /** @var \eZ\Publish\API\Repository\LocationService $locationService */
+            $location = $this->locationService->loadLocation($textmoduleLocationId);
+            $criteria = array(
+                new Criterion\Subtree($location->pathString),
+                new Criterion\Visibility(Criterion\Visibility::VISIBLE),
+                new Criterion\Field('identifier', Criterion\Operator::EQ, $textmoduleId),
+            );
+
+            $query->criterion = new Criterion\LogicalAnd($criteria);
+            
+            $languageFilter = array();
+            $languageFilter['useAlwaysAvailable'] = true;
+            try {
+                $searchResults = $this->searchService->findContent($query, $languageFilter);
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            if ($searchResults->totalCount !== 0) {
+                return true;
+            }
+        } catch (\Exception $e) {
+
         }
         return false;
     }

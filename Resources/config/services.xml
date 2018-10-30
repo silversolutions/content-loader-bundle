@@ -17,11 +17,11 @@
         <!-- Public API -->
         <!-- Define LanguageService because it is not defined in Public API -->
 
-        <service class="eZ\Publish\Core\Repository\LanguageService" id="ezpublish.api.service.content_language"
-                factory-service="ezpublish.api.repository.factory" factory-method="buildService" lazy="true">
+        <!--service class="eZ\Publish\Core\Repository\LanguageService" id="ezpublish.api.service.content_language">
+            <factory service="ezpublish.api.repository.factory" method="buildService" />
             <argument id="ezpublish.api.repository" type="service"/>
             <argument>ContentLanguage</argument>
-        </service>
+        </service-->
 
         <!-- Helpers -->
         
@@ -39,10 +39,10 @@
 
         <!-- Node visitors -->
         
-        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\ContentLanguage" id="siso.content_loader.visitor.language" public="false">
+        <!--service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\ContentLanguage" id="siso.content_loader.visitor.language" public="false">
             <argument id="ezpublish.api.service.content_language" type="service"/>
             <tag name="siso.content_loader.visitor" />
-        </service>
+        </service-->
 
         <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\UserGroup" id="siso.content_loader.visitor.user_group" public="false">
             <argument id="ezpublish.api.repository" type="service"/>
@@ -103,6 +103,13 @@
             <tag name="siso.content_loader.visitor" />
         </service>
 
+        <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\RichTextField" id="siso.content_loader.visitor.richtext_field" public="false">
+            <argument id="ezpublish.api.repository" type="service"/>
+            <tag name="siso.content_loader.visitor" />
+        </service>
+
+
+
         <service class="Siso\Bundle\ContentLoaderBundle\NodeVisitors\Fields\CheckboxField" id="siso.content_loader.visitor.checkbox_field" public="false">
             <argument id="ezpublish.api.repository" type="service"/>
             <tag name="siso.content_loader.visitor" />
@@ -137,7 +144,7 @@
         <service id="siso.content_loader.database_schema_creator" class="%siso.content_loader.database_schema_creator.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="ezpublish.config.resolver"/>
-            <argument type="service" id="ezpublish_legacy.persistence_cache_purger"/>
+            <!--argument type="service" id="ezpublish_legacy.persistence_cache_purger"/-->
             <argument>%kernel.root_dir%</argument>
         </service>
 

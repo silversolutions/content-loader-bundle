@@ -30,7 +30,12 @@ class Normalizer extends SerializerAwareNormalizer implements NormalizerInterfac
             $attributeValue = $property->getValue($object);
 
             if (null !== $attributeValue && !is_scalar($attributeValue)) {
-                $attributeValue = $this->serializer->normalize($attributeValue, $format, $context);
+                try {
+                    $attributeValue = $this->serializer->normalize($attributeValue, $format, $context);
+                } catch (\Exception $e) {
+                    $message = $e->getMessage();
+                }
+
             }
 
             $propertyName = $property->name;
